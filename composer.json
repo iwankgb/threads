@@ -8,7 +8,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "4.0.*",
-        "mockery/mockery": "0.9.0"
+        "mockery/mockery": "0.9.0",
+        "fabpot/php-cs-fixer": "v0.4.0"
     },
     "config": {
         "bin-dir": "bin"
@@ -17,5 +18,9 @@
         "psr-0": {
             "Iwan": "src/"
         }
+    },
+    "scripts": {
+        "post-install-cmd": "ln -sf ../../hooks/pre-commit .git/hooks/pre-commit",
+        "post-update-cmd": "ln -sf ../../hooks/pre-commit .git/hooks/pre-commit"
     }
 }
