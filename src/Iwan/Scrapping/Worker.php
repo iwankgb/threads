@@ -43,12 +43,12 @@ class Worker
      */
     public function scrap($url)
     {
-        $this->request->setMethod('GET');
+        $this->request->setMethod(HTTP_METH_GET);
         $this->request->setUrl($url);
-        $response = $this->request->sent();
+        $response = $this->request->send();
 
         $this->crawler->addHtmlContent($response->getBody());
-        $subCrawler = $this->crawler->filterXPath('\\head\meta[property="og:title"]');
+        $subCrawler = $this->crawler->filterXPath('//head/meta[@property="og:title"]');
         $meta = $subCrawler->getNode(0);
 
         return $meta->getAttribute('content');
