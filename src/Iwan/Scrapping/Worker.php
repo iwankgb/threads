@@ -2,7 +2,7 @@
 namespace Iwan\Scrapping;
 
 use \http\Client;
-use \http\Client\Request;
+use \HttpRequest;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -17,7 +17,7 @@ class Worker
      * Http client
      * @var Client
      */
-    private $client;
+    private $request;
 
     /**
      * DOM document crawler
@@ -25,15 +25,32 @@ class Worker
      */
     private $crawler;
 
-    public function __construct(Client $client, Crawler $crawler)
+    /**
+     * Class constructo
+     * @param HttpRequest                           $request
+     * @param \Symfony\Component\DomCrawler\Crawler $crawler
+     */
+    public function __construct(HttpRequest $request, Crawler $crawler)
     {
-        $this->client = $client;
+        $this->request = $request;
         $this->crawler = $crawler;
     }
 
+    /**
+     * Scraps og:title off the page content
+     * @param  string $url
+     * @return string
+     */
     public function scrap($url)
     {
-        $request = new Request('GET', $url);
-        $this->client->enqueue($request);
+        $this->request->setMethod('GET');
+        $this->request->setUrl($url);
+        $response = $this->request->sent();
+
+        $this->crawler->addHtmlContent($response->getBody());
+        $subCrawler = $this->crawler->filterXPath('\\head\meta[property="og:title"]');
+        $meta = $subCrawler->getNode(0);
+
+        return $meta->getAttribute('content');
     }
 }
