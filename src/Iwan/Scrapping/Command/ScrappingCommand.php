@@ -43,8 +43,11 @@ class ScrappingCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $url = $input->getArgument('url');
-        $scrapper = $this->container->get('scrapper');
-        $title = $scrapper->scrap($url);
+        $scrapper = $this->container->get('threaded_scrapper');
+        $scrapper->setUrl($url);
+        $scrapper->start();
+        $scrapper->join();
+        $title = $scrapper->getTitle();
         $output->writeln($title);
     }
 }
