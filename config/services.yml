@@ -1,8 +1,15 @@
 services:
     request:
         class: HttpRequest
+        scope: prototype
     crawler:
         class: Symfony\Component\DomCrawler\Crawler
+        scope: prototype
     scrapper:
         class: Iwan\Scrapping\Worker
         arguments: ['@request', '@crawler']
+        scope: prototype
+    threaded_scrapper:
+        class: Iwan\Scrapping\ThreadedWorker
+        arguments: ['@scrapper']
+        scope: prototype
