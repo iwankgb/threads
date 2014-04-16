@@ -1,0 +1,8 @@
+services:
+    request:
+        class: HttpRequest
+    crawler:
+        class: Symfony\Component\DomCrawler\Crawler
+    scrapper:
+        class: Iwan\Scrapping\Worker
+        arguments: ['@request', '@crawler']
