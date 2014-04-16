@@ -5,6 +5,7 @@ use PHPUnit_Framework_TestCase;
 use Mockery as m;
 use Iwan\Scrapping\Worker;
 use \HttpMessage;
+use \HttpRequest;
 
 /**
  * Page scrapper test
@@ -2659,12 +2660,12 @@ Vary: X-CDN
 $body
 MSG;
         $message = new HttpMessage($msg);
-        $this->request->shouldReceive('setMethod')->with(HttpRequest::HTTP_METH_GET)->once();
+        $this->request->shouldReceive('setMethod')->with(HTTP_METH_GET)->once();
         $this->request
             ->shouldReceive('setUrl')
             ->with('http://example.com/1.html')
             ->once();
-        $this->request->shouldReceive('sent')->once()->andReturn($message);
+        $this->request->shouldReceive('send')->once()->andReturn($message);
         
         $meta = m::mock('DOMElement');
         $meta
@@ -2683,7 +2684,7 @@ MSG;
             ->with($message->getBody());
         $this->crawler
             ->shouldReceive('filterXPath')
-            ->with('\\head\meta[property="og:title"]')
+            ->with('//head/meta[@property="og:title"]')
             ->andReturn($subCrawler)
             ->once();
         
