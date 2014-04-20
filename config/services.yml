@@ -11,20 +11,10 @@ services:
         scope: prototype
     threaded_scrapper:
         class: Iwan\Scrapping\ThreadedWorker
-        arguments: ['@scrapper', '@logger_mutex', '@raw_file']
+        arguments: ['@scrapper', '@logger_mutex', '/home/maciek/projects/threads/threads.log']
         scope: prototype
     logger_mutex:
         class: Mutex
         factory_class: Mutex
         factory_method: create
-        scope: container
-    log_file:
-        class: SplFileInfo
-        arguments: ['/home/maciek/projects/threads/threads.log']
-        scope: container
-    raw_file:
-        class: SplFileObject
-        factory_service: log_file
-        factory_method: openFile
-        arguments: ['a']
         scope: container

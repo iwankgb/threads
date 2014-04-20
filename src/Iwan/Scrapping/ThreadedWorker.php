@@ -2,6 +2,8 @@
 namespace Iwan\Scrapping;
 
 use \Thread;
+use \Mutex;
+use \SplFileObject;
 
 /**
  * Pthreads enhanced scrapper
@@ -23,18 +25,34 @@ class ThreadedWorker extends Thread
     private $url;
 
     /**
-     * Scrapped title
-     * @var string
+     * Output mutex
+     * @var long
      */
-    private $title;
+    private $logMutex;
+
+    /**
+     * Log file
+     * @var SplFileObject
+     */
+    private $file;
 
     /**
      * Class constructor
      * @param Worker $worker
      */
-    public function __construct(Worker $worker)
+    public function __construct(Worker $worker, $logMutex, $file)
     {
         $this->worker = $worker;
+        $this->logMutex = $logMutex;
+        $this->file = fopen($file, 'a');
+    }
+
+    /**
+     * Desctructor - we really need to close the file
+     */
+    public function __destruct()
+    {
+        fclose($this->file);
     }
 
     /**
@@ -47,20 +65,28 @@ class ThreadedWorker extends Thread
     }
 
     /**
-     * Gets scrapped title
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
      * This method really runs the task
      * @param string $url
      */
     public function run()
     {
-        $this->title = $this->worker->scrap($this->url);
+        $start = microtime(true);
+        $this->log("Running...");
+        $title = $this->worker->scrap($this->url);
+        $this->log("Title: $title");
+        $total = microtime(true) - $start;
+        $this->log("Running for: $total");
+    }
+
+    /**
+     * Logs messages to application log
+     * @param string  $msg   message to be logged
+     * @param integer $level log level
+     */
+    private function log($msg)
+    {
+        Mutex::lock($this->logMutex);
+        fwrite($this->file, "THREAD {$this->getThreadId()}:\t$msg\n");
+        Mutex::unlock($this->logMutex);
     }
 }
