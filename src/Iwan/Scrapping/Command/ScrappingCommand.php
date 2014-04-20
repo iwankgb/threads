@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use \Mutex;
+use Iwan\Scrapping\Scrapped\Scrapped;
 
 /**
  * Scrapping console command
@@ -57,20 +58,39 @@ class ScrappingCommand extends Command
         $start = microtime(true);
         $urls = $input->getArgument('url');
         $this->prepareThreads($output, count($urls));
+        $this->doWork($urls);
+        $total = microtime(true) - $start;
+        $output->writeln("<fg=red>TOTAL: $total</fg=red>");
+        $this->closeMutex();
+    }
+
+    /**
+     * Do some cleanup
+     */
+    private function closeMutex()
+    {
+        foreach ($this->pool as $worker) {
+            $worker->getTerminationInfo();
+        }
+        $loggerMutex = $this->container->get('logger_mutex');
+        Mutex::destroy($loggerMutex);
+    }
+
+    /**
+     * Dispatching the work to threads
+     * @param array $urls
+     */
+    private function doWork(array $urls)
+    {
         $i= 0;
         foreach ($urls as $url) {
             $this->pool[$i]->setUrl($url);
-            $output->writeln("<info>{$this->pool[$i]->getThreadId()}: start</info>");
-            $this->pool[$i++]->start();
+            $this->pool[$i]->start();
+            $i++;
         }
         foreach ($this->pool as $worker) {
-            $output->writeln("<info>{$worker->getThreadId()}: join</info>");
             $worker->join();
         }
-        $total = microtime(true) - $start;
-        $output->writeln("<fg=red>TOTAL: $total</fg=red>");
-        $loggerMutex = $this->container->get('logger_mutex');
-        Mutex::destroy($loggerMutex);
     }
 
     /**

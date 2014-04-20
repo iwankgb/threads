@@ -3,7 +3,6 @@ namespace Iwan\Scrapping;
 
 use \Thread;
 use \Mutex;
-use \SplFileObject;
 
 /**
  * Pthreads enhanced scrapper
@@ -71,7 +70,7 @@ class ThreadedWorker extends Thread
     public function run()
     {
         $start = microtime(true);
-        $this->log("Running...");
+        $this->log("Running with url: {$this->url}");
         $title = $this->worker->scrap($this->url);
         $this->log("Title: $title");
         $total = microtime(true) - $start;
