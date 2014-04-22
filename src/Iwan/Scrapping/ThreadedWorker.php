@@ -43,7 +43,7 @@ class ThreadedWorker extends Thread
     {
         $this->worker = $worker;
         $this->logMutex = $logMutex;
-        $this->file = fopen($file, 'a');
+//        $this->file = fopen($file, 'a');
     }
 
     /**
@@ -51,7 +51,7 @@ class ThreadedWorker extends Thread
      */
     public function __destruct()
     {
-        fclose($this->file);
+//        fclose($this->file);
     }
 
     /**
@@ -69,12 +69,20 @@ class ThreadedWorker extends Thread
      */
     public function run()
     {
+        $this->done = false;
         $start = microtime(true);
         $this->log("Running with url: {$this->url}");
         $title = $this->worker->scrap($this->url);
         $this->log("Title: $title");
         $total = microtime(true) - $start;
         $this->log("Running for: $total");
+        $this->synchronized(function () {
+            $this->log('Starting sync...');
+            $this->wait();
+            $this->log('Finishing sync...');
+            $this->done = true;
+            $this->log('Done!');
+        });
     }
 
     /**
@@ -85,6 +93,7 @@ class ThreadedWorker extends Thread
     private function log($msg)
     {
         Mutex::lock($this->logMutex);
+        echo "THREAD {$this->getThreadId()}:\t$msg\n";
         fwrite($this->file, "THREAD {$this->getThreadId()}:\t$msg\n");
         Mutex::unlock($this->logMutex);
     }
