@@ -15,19 +15,45 @@ class Payload extends Stackable
      */
     private $url;
 
+    /**
+     * Scrapped title
+     * @var string
+     */
+    private $title;
+
+    /**
+     * Constructor
+     * @param string $url URL to be scrapped
+     */
     public function __construct($url)
     {
         $this->url = $url;
     }
 
+    /**
+     * When using Stackable then this method really runs the task
+     */
     public function run()
     {
         $this->worker->setUrl($this->url);
-        $this->worker->go();
+        $this->title = $this->worker->go();
     }
 
+    /**
+     * Returns URL to be retrieved
+     * @return string
+     */
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Returns title scraped from the URL
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 }

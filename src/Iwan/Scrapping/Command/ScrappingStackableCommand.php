@@ -71,9 +71,29 @@ class ScrappingStackableCommand extends Command
         $urls = $input->getArgument('url');
         $this->prepareThreads($output, 2);
         $this->doWork($urls);
+        $this->closeMutex();
+
+        $data = $this->getData();
+        foreach ($data as $url => $title) {
+            $output->writeln("$url\t$title");
+        }
+
         $total = microtime(true) - $start;
         $output->writeln("<fg=red>TOTAL: $total</fg=red>");
-        $this->closeMutex();
+    }
+
+    /**
+     * Returns data from the payloads
+     * @return array
+     */
+    private function getData()
+    {
+        $data = [];
+        foreach ($this->payload as $payload) {
+            $data[$payload->getUrl()] = $payload->getTitle();
+        }
+
+        return $data;
     }
 
     /**
@@ -82,9 +102,8 @@ class ScrappingStackableCommand extends Command
     private function closeMutex()
     {
         foreach ($this->pool as $worker) {
-            var_dump($worker->getTerminationInfo());
+//            var_dump($worker->getTerminationInfo());
             $worker->shutdown();
-            var_dump($worker->getTitles());
         }
         $loggerMutex = $this->container->get('logger_mutex');
         Mutex::destroy($loggerMutex);

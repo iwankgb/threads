@@ -37,12 +37,6 @@ class ThreadedWorker extends Worker
     private $file;
 
     /**
-     * Fetched title
-     * @var array
-     */
-    protected $titles;
-
-    /**
      * Class constructor
      * @param Worker $worker
      */
@@ -80,12 +74,11 @@ class ThreadedWorker extends Worker
         $start = microtime(true);
         $this->log("Running with url: {$this->url}");
         $title = $this->worker->scrap($this->url);
-        $this->titles[md5($this->url)] = $title;
-        $this->log("Empty?! " . $this->titles[md5($this->url)]);
-        var_dump($this->titles);
         $this->log("Title: $title");
         $total = microtime(true) - $start;
         $this->log("Running for: $total");
+
+        return $title;
     }
 
     /**
@@ -98,15 +91,6 @@ class ThreadedWorker extends Worker
     }
 
     /**
-     * Returnes fetched titles
-     * @return array
-     */
-    public function getTitles()
-    {
-        return $this->titles;
-    }
-
-    /**
      * Logs messages to application log
      * @param string  $msg   message to be logged
      * @param integer $level log level
@@ -114,7 +98,7 @@ class ThreadedWorker extends Worker
     private function log($msg)
     {
         Mutex::lock($this->logMutex);
-        echo "THREAD {$this->getThreadId()}:\t$msg\n";
+//        echo "THREAD {$this->getThreadId()}:\t$msg\n";
         fwrite($this->file, "THREAD {$this->getThreadId()}:\t$msg\n");
         Mutex::unlock($this->logMutex);
     }
