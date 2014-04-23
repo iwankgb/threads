@@ -8,6 +8,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Console\Application;
 use Iwan\Scrapping\Command\ScrappingCommand;
+use Iwan\Scrapping\Command\ScrappingStackableCommand;
 
 $container = new ContainerBuilder();
 $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config/'));
@@ -18,4 +19,7 @@ $application = new Application('Threading test');
 $cmd = new ScrappingCommand();
 $cmd->setContainer($container);
 $application->add($cmd);
+$cmdStack = new ScrappingStackableCommand();
+$cmdStack->setContainer($container);
+$application->add($cmdStack);
 $application->run();
