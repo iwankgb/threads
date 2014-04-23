@@ -72,7 +72,6 @@ class ScrappingCommand extends Command
      */
     private function closeMutex()
     {
-//        var_dump($this->pool);
         foreach ($this->pool as $worker) {
             var_dump($worker->getTerminationInfo());
         }
@@ -90,21 +89,10 @@ class ScrappingCommand extends Command
         foreach ($urls as $url) {
             $this->pool[$i]->setUrl($url);
             $this->pool[$i]->start();
-            $this->pool[$i]->synchronized(function (Thread $thread) {
-                $id = $thread->getThreadId();
-                if (!$thread->done) {
-                    echo "$id - synchronizing...\n";
-                    sleep(5);
-                    $thread->notify();
-                    echo "$id - synchronized...\n";
-                } else {
-                    echo "$id - something is wrong...\n";
-                }
-            }, $this->pool[$i]);
             $i++;
         }
         foreach ($this->pool as $worker) {
-//            $worker->join();
+            $worker->join();
         }
     }
 
