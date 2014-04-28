@@ -16,25 +16,25 @@ class ThreadedWorker extends Worker
      * Class that performs scrapping
      * @var Worker
      */
-    private $worker;
+    protected $worker;
 
     /**
      * URL to be scrapped
      * @var string
      */
-    private $url;
+    protected $url;
 
     /**
      * Output mutex
      * @var long
      */
-    private $logMutex;
+    protected $logMutex;
 
     /**
      * Log file
      * @var SplFileObject
      */
-    private $file;
+    protected $file;
 
     /**
      * Class constructor
@@ -45,7 +45,6 @@ class ThreadedWorker extends Worker
         $this->worker = $worker;
         $this->logMutex = $logMutex;
         $this->file = fopen($file, 'a');
-        $this->titles = [];
     }
 
     /**
@@ -95,7 +94,7 @@ class ThreadedWorker extends Worker
      * @param string  $msg   message to be logged
      * @param integer $level log level
      */
-    private function log($msg)
+    protected function log($msg)
     {
         Mutex::lock($this->logMutex);
 //        echo "THREAD {$this->getThreadId()}:\t$msg\n";

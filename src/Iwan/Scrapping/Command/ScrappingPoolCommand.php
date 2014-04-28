@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use \Pool;
-use Iwan\Scrapping\Stackable\ThreadedWorker;
+use Iwan\Scrapping\Pool\ThreadedWorker;
 use Iwan\Scrapping\Stackable\Payload;
 
 /**
@@ -56,8 +56,9 @@ class ScrappingPoolCommand extends Command
     {
         $size = $input->getArgument('size');
         $urls = $input->getArgument('url');
+        $log = $input->getArgument('log');
 
-        $pool = $this->preparePool($size);
+        $pool = $this->preparePool($size, $log);
         foreach ($urls as $url) {
             $payload = new Payload($url);
             $pool->submit($payload);
@@ -66,23 +67,26 @@ class ScrappingPoolCommand extends Command
 
         $pool->collect(function (Payload $work) use ($output) {
             $output->writeln($work->getUrl() . "\t" . $work->getTitle());
+
+            return true;
         });
     }
 
     /**
      * Prepares worker pool
      * @param  integer $size worker pool size
+     * @param  string  $log  path to log file
      * @return Pool
      */
-    private function preparePool($size)
+    private function preparePool($size, $log)
     {
         $pool = new Pool(
             $size,
             ThreadedWorker::class,
             [
-                $this->container->get('scrapper'),
-                $this->container->get('logger_mutex_stackable'),
-                $size,
+                function () {return $this->container->get('scrapper');},
+                function () {return $this->container->get('logger_mutex_stackable');},
+                $log,
             ]
         );
 
