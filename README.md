@@ -1,12 +1,7 @@
-#!/bin/bash
-echo "$#"
-if [ $# != 1 ]; then
-    echo "You have to provide number of threads to create"
-    exit 2
-fi
-app/app.php --verbose scrap:pool \
+# Example call
+/opt/php-5.5/bin/php app/app.php --verbose scrap:pool \
     10 \
-    /home/maciek/projects/threads/threads.log \
+    threads.log \
     http://www.bbc.com/news/world-asia-27096629 \
     http://www.bbc.com/future/story/20140418-the-top-attenborough-moments \
     http://www.bbc.com/news/world-europe-27124453 \
