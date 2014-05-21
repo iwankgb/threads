@@ -54,13 +54,6 @@ foreach ($urls as $url) {
 
 $pool->shutdown();
 
-$data = [];
-$pool->collect(function (Payload $work) use ($data) {
-    $data[$work->getUrl()] = $work->getTitle();
-
-    return true;
-});
-
-register_shutdown_function(function () use ($container) {
-    $container->get('logger_mutex_stackable')->destroy();
+$pool->collect(function (Payload $work) {
+    echo $work->getTitle() . " " . $work->getUrl() . "<br>";
 });
