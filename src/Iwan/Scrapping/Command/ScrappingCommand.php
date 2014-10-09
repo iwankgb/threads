@@ -75,7 +75,7 @@ class ScrappingCommand extends Command
         foreach ($this->pool as $worker) {
             var_dump($worker->getTerminationInfo());
         }
-        $loggerMutex = $this->container->get('logger_mutex');
+        $loggerMutex = $this->container->get('logger_file');
         Mutex::destroy($loggerMutex);
     }
 
