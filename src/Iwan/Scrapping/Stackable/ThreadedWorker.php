@@ -44,7 +44,14 @@ class ThreadedWorker extends Worker
     {
         $this->worker = $worker;
         $this->logMutex = $logMutex;
-        $this->file = $file;
+        $this->file = fopen($file, 'a');
+    }
+
+    public function __destruct()
+    {
+        if (is_resource($this->file)) {
+            fclose($this->file);
+        }
     }
 
     /**
@@ -90,9 +97,7 @@ class ThreadedWorker extends Worker
     {
         Mutex::lock($this->logMutex);
         echo "Stackable THREAD {$this->getThreadId()}:\t$msg\n";
-        $file = fopen($this->file, 'a');
-        fwrite($file, "Stackable THREAD {$this->getThreadId()}:\t$msg\n");
-        fclose($file);
+        fwrite($this->file, "Stackable THREAD {$this->getThreadId()}:\t$msg\n");
         Mutex::unlock($this->logMutex);
     }
 }
