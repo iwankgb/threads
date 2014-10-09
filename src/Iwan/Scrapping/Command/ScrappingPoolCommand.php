@@ -77,9 +77,17 @@ class ScrappingPoolCommand extends Command
             return true;
         });
 
+        $arrData = [];
         foreach ($data as $item) {
-            var_dump($item);
+            $arrData[] = [
+                $item->url,
+                $item->title,
+            ];
         }
+        $table = $this->getHelper('table');
+        $table->setRows($arrData);
+        $table->setHeaders(['URL', 'Title']);
+        $table->render($output);
     }
 
     /**

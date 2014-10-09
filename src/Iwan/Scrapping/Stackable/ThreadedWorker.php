@@ -96,7 +96,6 @@ class ThreadedWorker extends Worker
     protected function log($msg)
     {
         Mutex::lock($this->logMutex);
-        echo "Stackable THREAD {$this->getThreadId()}:\t$msg\n";
         fwrite($this->file, "Stackable THREAD {$this->getThreadId()}:\t$msg\n");
         Mutex::unlock($this->logMutex);
     }
