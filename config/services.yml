@@ -11,18 +11,13 @@ services:
         scope: prototype
     threaded_scrapper:
         class: Iwan\Scrapping\ThreadedWorker
-        arguments: ['@scrapper', '@logger_mutex', '/home/maciek/projects/threads/threads.log']
+        arguments: ['@scrapper', '@logger_file', '/home/maciek/projects/threads/threads.log']
         scope: prototype
     threaded_scrapper_stackable:
         class: Iwan\Scrapping\Stackable\ThreadedWorker
-        arguments: ['@scrapper', '@logger_mutex_stackable', '/home/maciek/projects/threads/threads.log']
+        arguments: ['@scrapper', '@logger_file', '/home/maciek/projects/threads/threads.log']
         scope: prototype
-    logger_mutex:
-        class: Mutex
-        factory_class: Mutex
-        factory_method: create
-        scope: container
-    logger_mutex_stackable:
+    logger_file:
         class: Mutex
         factory_class: Mutex
         factory_method: create

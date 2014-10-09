@@ -43,7 +43,6 @@ class ThreadedWorker extends Thread
     {
         $this->worker = $worker;
         $this->logMutex = $logMutex;
-        $this->file = fopen($file, 'a');
     }
 
     /**
@@ -51,7 +50,7 @@ class ThreadedWorker extends Thread
      */
     public function __destruct()
     {
-        fclose($this->file);
+
     }
 
     /**
@@ -85,9 +84,11 @@ class ThreadedWorker extends Thread
      */
     private function log($msg)
     {
-        Mutex::lock($this->logMutex);
-        echo "THREAD {$this->getThreadId()}:\t$msg\n";
-        fwrite($this->file, "THREAD {$this->getThreadId()}:\t$msg\n");
-        Mutex::unlock($this->logMutex);
+//        Mutex::lock($this->logMutex);
+//        echo " Scrapping THREAD {$this->getThreadId()}:\t$msg\n";
+//        $this->file = fopen($file, 'a');
+//        fwrite($this->file, "Scrapping THREAD {$this->getThreadId()}:\t$msg\n");
+//        fclose($this->file);
+//        Mutex::unlock($this->logMutex);
     }
 }

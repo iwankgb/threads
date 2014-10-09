@@ -9,6 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use \Pool;
 use Iwan\Scrapping\Pool\ThreadedWorker;
 use Iwan\Scrapping\Stackable\Payload;
+use \SplObjectStorage;
+use \stdClass;
 
 /**
  * BBC scrapping using thread pool
@@ -65,11 +67,19 @@ class ScrappingPoolCommand extends Command
         }
         $pool->shutdown();
 
-        $pool->collect(function (Payload $work) use ($output) {
-            $output->writeln($work->getUrl() . "\t" . $work->getTitle());
+        $data = new SplObjectStorage();
+        $pool->collect(function (Payload $work) use ($data) {
+            $item = new stdClass();
+            $item->title = $work->getTitle();
+            $item->url = $work->getUrl();
+            $data->attach($item);
 
             return true;
         });
+
+        foreach ($data as $item) {
+            var_dump($item);
+        }
     }
 
     /**
@@ -85,7 +95,7 @@ class ScrappingPoolCommand extends Command
             ThreadedWorker::class,
             [
                 function () {return $this->container->get('scrapper');},
-                function () {return $this->container->get('logger_mutex_stackable');},
+                function () {return $this->container->get('logger_file');},
                 $log,
             ]
         );
