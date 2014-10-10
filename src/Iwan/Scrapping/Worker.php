@@ -4,6 +4,7 @@ namespace Iwan\Scrapping;
 use \http\Client;
 use \HttpRequest;
 use Symfony\Component\DomCrawler\Crawler;
+use \Exception;
 
 /**
  * Page scrapping worker; scraps title only
@@ -43,14 +44,21 @@ class Worker
      */
     public function scrap($url)
     {
+        $title = '';
         $this->request->setMethod(HTTP_METH_GET);
         $this->request->setUrl($url);
-        $response = $this->request->send();
+        try {
+            $response = $this->request->send();
+            $this->crawler->addHtmlContent($response->getBody());
+            $subCrawler = $this->crawler->filterXPath('//head/meta[@property="og:title"]');
+            $meta = $subCrawler->getNode(0);
+            if ($meta) {
+                $title = $meta->getAttribute('content');
+            }
+        } catch (Exception $e) {
 
-        $this->crawler->addHtmlContent($response->getBody());
-        $subCrawler = $this->crawler->filterXPath('//head/meta[@property="og:title"]');
-        $meta = $subCrawler->getNode(0);
+        }
 
-        return $meta->getAttribute('content');
+        return $title;
     }
 }
