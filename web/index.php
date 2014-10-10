@@ -22,7 +22,7 @@ $pool = new Pool(
     ThreadedWorker::class,
     [
         function () use ($container) {return $container->get('scrapper');},
-        function () use ($container) {return $container->get('logger_mutex_stackable');},
+        function () use ($container) {return $container->get('logger_file');},
         '/home/maciek/projects/threads/threads.log',
     ]
 );
@@ -54,6 +54,27 @@ foreach ($urls as $url) {
 
 $pool->shutdown();
 
-$pool->collect(function (Payload $work) {
-    echo $work->getTitle() . " " . $work->getUrl() . "<br>";
+$data = new SplObjectStorage();
+$pool->collect(function (Payload $work) use ($data) {
+    $item = new stdClass();
+    $item->title = $work->getTitle();
+    $item->url = $work->getUrl();
+    $data->attach($item);
+
+    return true;
 });
+
+header('Content-Type: text/html; charset=utf8');
+?>
+<html>
+    <body>
+        <table>
+            <?php foreach ($data as $row) : ?>
+            <tr>
+                <td><?php echo $row->title ?></td>
+                <td><?php echo $row->url ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    </body>
+</html>
