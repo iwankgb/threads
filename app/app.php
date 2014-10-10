@@ -10,6 +10,7 @@ use Symfony\Component\Console\Application;
 use Iwan\Scrapping\Command\ScrappingCommand;
 use Iwan\Scrapping\Command\ScrappingStackableCommand;
 use Iwan\Scrapping\Command\ScrappingPoolCommand;
+use Iwan\OldSchool\Command\ForkScrapperCommand;
 
 $container = new ContainerBuilder();
 $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config/'));
@@ -29,5 +30,9 @@ $application->add($cmdStack);
 $cmdPool = new ScrappingPoolCommand();
 $cmdPool->setContainer($container);
 $application->add($cmdPool);
+
+$cmdFork = new ForkScrapperCommand();
+$cmdFork->setContainer($container);
+$application->add($cmdFork);
 
 $application->run();
