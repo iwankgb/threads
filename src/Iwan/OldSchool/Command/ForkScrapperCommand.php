@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\Table;
 
 /**
  * A scrapping command that will use fork();
@@ -57,11 +58,11 @@ class ForkScrapperCommand extends Command
         $master = $this->container->get('scrapping_master');
         $data = $master->run($count, $urls, $pids);
 
-        $output->writeln('Done');
-        $table = $this->getHelper('table');
-        $table->setRows($data);
-        $table->setHeaders(['URL', 'Title', 'Time']);
-        $table->render($output);
+        $table = new Table($output);
+        $table
+            ->setHeaders(['URL', 'Title', 'Time'])
+            ->setRows($data);
+        $table->render();
     }
 
     /**

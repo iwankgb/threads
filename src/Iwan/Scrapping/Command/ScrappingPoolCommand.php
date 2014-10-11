@@ -11,6 +11,7 @@ use Iwan\Scrapping\Pool\ThreadedWorker;
 use Iwan\Scrapping\Stackable\Payload;
 use \SplObjectStorage;
 use \stdClass;
+use Symfony\Component\Console\Helper\Table;
 
 /**
  * BBC scrapping using thread pool
@@ -84,10 +85,12 @@ class ScrappingPoolCommand extends Command
                 $item->title,
             ];
         }
-        $table = $this->getHelper('table');
-        $table->setRows($arrData);
-        $table->setHeaders(['URL', 'Title']);
-        $table->render($output);
+
+        $table = new Table($output);
+        $table
+            ->setHeaders(['URL', 'Title'])
+            ->setRows($arrData);
+        $table->render();
     }
 
     /**
