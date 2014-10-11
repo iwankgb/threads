@@ -25,7 +25,8 @@ class Logger extends AbstractLogger
         $now = new DateTime();
         $strDate = $now->format('c');
         $this->semaphore->acquire();
-        fwrite($this->file, "$strDate $level: $message\n$strDate $level: " . json_encode($context));
+        fwrite($this->file, getmypid() . "\t$strDate\t$level\t$message\n");
+        fwrite($this->file, getmypid() . "\t$strDate\t$level\t" . json_encode($context) . "\n");
         $this->semaphore->release();
     }
 }
