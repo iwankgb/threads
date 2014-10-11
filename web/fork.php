@@ -7,7 +7,13 @@ header('Content-Type: text/html; charset=utf8');
     </head>
     <body>
         <h1>Fail</h1>
-        <p>It just does not work. I haven't investigated the issue and I did not really expect it to work</p>
+        <p>
+            It just does not work. I haven't investigated the issue and I did not really expect it to work
+        </p>
+        <p>
+            <strong>UPDATE:</strong> it does work (I can see entries in the log file) but outputs nothing.
+            It might be an issues with <a href="http://stackoverflow.com/questions/10660130/php-fpm-and-pcntl-fork">output buffering</a> or something else.
+        </p>
     </body>
 </html>
 <?php
