@@ -22,3 +22,14 @@ services:
         factory_class: Mutex
         factory_method: create
         scope: container
+    scrapping_queue:
+        class: Iwan\OldSchool\Queue
+        arguments: [1234, 1024]
+    scrapping_process:
+        class: Iwan\OldSchool\Process
+        arguments: ['@scrapping_queue', '@scrapper']
+        scope: prototype
+    scrapping_master:
+        class: Iwan\OldSchool\Master
+        arguments: ['@scrapping_queue']
+        scope: prototype
