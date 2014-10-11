@@ -34,14 +34,16 @@ class Master
     {
         $data = [];
         $status = 0;
+        $urlCount = count($urls);
+
         foreach ($urls as $url) {
             $this->queue->send(2, $url);
         }
 
-        while (count($urls)) {
+        while ($urlCount) {
             $result = $this->queue->receive(1);
             $data[] = $result;
-            array_shift($urls);
+            $urlCount--;
         }
 
         for ($i=1; $i<=$count; $i++) {
