@@ -24,7 +24,7 @@ services:
         scope: container
     scrapping_queue:
         class: Iwan\OldSchool\Queue
-        arguments: [1234, 1024]
+        arguments: [1234, 1024, '@scrapping_logger']
     scrapping_process:
         class: Iwan\OldSchool\Process
         arguments: ['@scrapping_queue', '@scrapper', '@scrapping_logger']

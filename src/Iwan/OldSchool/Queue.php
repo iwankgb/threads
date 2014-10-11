@@ -21,14 +21,21 @@ class Queue
     private $size;
 
     /**
+     * A logger
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * Constructor
      * @param integer $id
      * @param integer $size
      */
-    public function __construct($id, $size)
+    public function __construct($id, $size, Logger $logger)
     {
         $this->queue = msg_get_queue($id);
         $this->size = $size;
+        $this->logger = $logger;
     }
 
     /**
@@ -48,7 +55,12 @@ class Queue
      */
     public function send($type, $msg)
     {
-        msg_send($this->queue, $type, $msg);
+        $err = 0;
+        if (!msg_send($this->queue, $type, $msg, true, false, $err)) {
+            $this->logger->critical("Message of type $type not sent: $err", (array) $msg);
+        } else {
+            $this->logger->debug("Message of type $type sent", (array) $msg);
+        }
     }
 
     /**
