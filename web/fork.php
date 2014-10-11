@@ -2,9 +2,7 @@
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
-use \Pool;
-use Iwan\Scrapping\Stackable\Payload;
-use Iwan\Scrapping\Pool\ThreadedWorker;
+
 /**
  * This is just proof of concept. Running pthreads using php-fpm
  * @author Maciej Iwanowski <kasztelix@gmail.com>
@@ -17,15 +15,7 @@ $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config/'
 $loader->load('services.yml');
 $container->compile();
 
-$pool = new Pool(
-    2,
-    ThreadedWorker::class,
-    [
-        function () use ($container) {return $container->get('scrapper');},
-        function () use ($container) {return $container->get('logger_file');},
-        '/home/maciek/projects/threads/threads.log',
-    ]
-);
+$count = 10;
 $urls = [
     'http://www.bbc.com/news/world-asia-27096629',
     'http://www.bbc.com/future/story/20140418-the-top-attenborough-moments',
@@ -46,33 +36,40 @@ $urls = [
     'http://www.bbc.co.uk/nepali/news/2014/04/140428_barassociation.shtml',
     'http://www.bbc.co.uk/burmese/burma/2014/04/140428_ethnic_gov_peace_talk_problem.shtml',
 ];
+$pids = [];
 
-foreach ($urls as $url) {
-    $payload = new Payload($url);
-    $pool->submit($payload);
+for ($i=1; $i<=$count; $i++) {
+    $pid = pcntl_fork();
+    if ($pid == -1) {
+        continue;
+    } elseif ($pid) {
+        $pids[$pid] = $pid;
+    } else {
+        $process = $container->get('scrapping_process');
+        while (true) {
+            $process->run();
+        }
+    }
 }
 
-$pool->shutdown();
-
-$data = new SplObjectStorage();
-$pool->collect(function (Payload $work) use ($data) {
-    $item = new stdClass();
-    $item->title = $work->getTitle();
-    $item->url = $work->getUrl();
-    $data->attach($item);
-
-    return true;
-});
+$master = $container->get('scrapping_master');
+$data = $master->run($count, $urls, $pids);
 
 header('Content-Type: text/html; charset=utf8');
 ?>
 <html>
     <body>
         <table>
+            <tr>
+                <th>URL</th>
+                <th>Title</th>
+                <th>Time</th>
+            </tr>
             <?php foreach ($data as $row) : ?>
             <tr>
-                <td><?php echo $row->title ?></td>
-                <td><?php echo $row->url ?></td>
+                <td><?php echo $row[0] ?></td>
+                <td><?php echo $row[1] ?></td>
+                <td><?php echo $row[2] ?></td>
             </tr>
             <?php endforeach; ?>
         </table>
