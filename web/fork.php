@@ -1,4 +1,17 @@
 <?php
+header('Content-Type: text/html; charset=utf8');
+?>
+<html>
+    <head>
+        <title>Fail - it won't work</title>
+    </head>
+    <body>
+        <h1>Fail</h1>
+        <p>It just does not work. I haven't investigated the issue and I did not really expect it to work</p>
+    </body>
+</html>
+<?php
+die();
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
