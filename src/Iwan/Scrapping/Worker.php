@@ -44,7 +44,7 @@ class Worker
      */
     public function scrap($url)
     {
-        $title = '';
+        $title = 'Unable to parse';
         $this->request->setMethod(HTTP_METH_GET);
         $this->request->setUrl($url);
         try {
@@ -56,7 +56,7 @@ class Worker
                 $title = $meta->getAttribute('content');
             }
         } catch (Exception $e) {
-
+            $title = $e->getMessage();
         }
 
         return $title;
