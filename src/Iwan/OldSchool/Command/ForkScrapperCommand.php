@@ -37,7 +37,6 @@ class ForkScrapperCommand extends Command
     {
         $this
             ->addArgument('size', InputArgument::REQUIRED, 'Number of processes to fork')
-            ->addArgument('log', InputArgument::REQUIRED, 'Path to the log file')
             ->addArgument('url', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'URLs to be scrapped')
             ->setName('oldschool:scrap')
             ->setDescription("Let's scrap some titles... with a nice fork");
