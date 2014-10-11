@@ -2,6 +2,7 @@
 namespace Iwan\OldSchool;
 
 use Iwan\Scrapping\Worker;
+
 /**
  * Class representing singe worker process
  *
@@ -54,7 +55,7 @@ class Process
             $end = microtime(true);
             $time = $end-$start;
             $this->queue->send(1, [$msg, $title, $time]);
-            $this->logger->debug(getmypid() . "\t$msg\t$title\t$time");
+            $this->logger->debug("$msg\t$title\t$time");
         }
     }
 }
