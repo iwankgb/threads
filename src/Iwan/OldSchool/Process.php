@@ -22,14 +22,21 @@ class Process
     private $scrapper;
 
     /**
+     * A simple logger
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * Constructor
      * @param Queue  $queue
      * @param Worker $scrapper
      */
-    public function __construct(Queue $queue, Worker $scrapper)
+    public function __construct(Queue $queue, Worker $scrapper, Logger $logger)
     {
         $this->queue = $queue;
         $this->scrapper = $scrapper;
+        $this->logger = $logger;
     }
 
     /**
@@ -45,7 +52,9 @@ class Process
             $start = microtime(true);
             $title = $this->scrapper->scrap($msg);
             $end = microtime(true);
-            $this->queue->send(1, [$msg, $title, $end-$start]);
+            $time = $end-$start;
+            $this->queue->send(1, [$msg, $title, $time]);
+            $this->logger->debug(getmypid() . "\t$msg\t$title\t$time");
         }
     }
 }

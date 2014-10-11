@@ -27,9 +27,15 @@ services:
         arguments: [1234, 1024]
     scrapping_process:
         class: Iwan\OldSchool\Process
-        arguments: ['@scrapping_queue', '@scrapper']
+        arguments: ['@scrapping_queue', '@scrapper', '@scrapping_logger']
         scope: prototype
     scrapping_master:
         class: Iwan\OldSchool\Master
         arguments: ['@scrapping_queue']
         scope: prototype
+    scrapping_semaphore:
+        class: Iwan\OldSchool\Semaphore
+        arguments: [5678]
+    scrapping_logger:
+        class: Iwan\OldSchool\Logger
+        arguments: ['@scrapping_semaphore', '/home/maciek/projects/threads/fork.log']
