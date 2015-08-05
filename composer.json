@@ -1,4 +1,6 @@
 {
+    "name": "iwankgb/threads",
+    "description": "threading and forking research project in PHP",
     "require": {
         "symfony/dom-crawler": "2.7.*",
         "symfony/console": "2.7.*",
