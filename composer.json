@@ -1,22 +1,22 @@
 {
     "require": {
-        "symfony/dom-crawler": "2.5.*",
-        "symfony/console": "2.5.*",
-        "symfony/dependency-injection": "2.5.*",
-        "symfony/yaml": "2.5.*",
-        "symfony/config": "2.5.*",
+        "symfony/dom-crawler": "2.7.*",
+        "symfony/console": "2.7.*",
+        "symfony/dependency-injection": "2.7.*",
+        "symfony/yaml": "2.7.*",
+        "symfony/config": "2.7.*",
         "psr/log": "1.0.0",
         "ext-pcntl": "*",
         "ext-sysvmsg": "*",
         "ext-sysvsem": "*",
-        "ext-pthreads": "2.0.10",
-        "ext-http": "1.7.*",
-        "php": "5.5.*"
+        "ext-pthreads": "~3.0@dev",
+        "guzzlehttp/guzzle": "~6.0",
+        "php": "~7.0@dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.0.*",
-        "mockery/mockery": "0.9.0",
-        "fabpot/php-cs-fixer": "v0.4.0"
+        "phpunit/phpunit": "~4",
+        "mockery/mockery": "~0.9",
+        "fabpot/php-cs-fixer": "~1"
     },
     "config": {
         "bin-dir": "bin"
