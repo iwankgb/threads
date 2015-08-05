@@ -5,7 +5,7 @@ FILES=$(git diff --name-only --cached HEAD)
 for FILE in $FILES; do
     if [ -f "$TOPLEVEL/$FILE" ];
     then
-        "$TOPLEVEL/bin/php-cs-fixer" fix "$TOPLEVEL/$FILE" --level=all --verbose
+        "$TOPLEVEL/bin/php-cs-fixer" fix "$TOPLEVEL/$FILE" --level=psr2 --verbose
         git add "$TOPLEVEL/$FILE"
     fi
 done;
